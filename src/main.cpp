@@ -8,10 +8,12 @@
 #include <QDesktopServices>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QProcess>
 #include <QRegularExpression>
 #include <QDateTime>
 #include <QStandardPaths>
 #include "logger.h"
+#include "utility.h"
 
 
 #pragma comment(linker, "/manifestDependency:\"name='dlls' processorArchitecture='x86' version='1.0.0.0' type='win32' \"")
@@ -52,10 +54,7 @@ void handleLink(const QString &executable, const QString &arguments, const QStri
     quotedLink = '"' + quotedLink + '"';
   }
 
-  ::ShellExecute(nullptr, TEXT("open"), ToWString(quotedExecutable).c_str(),
-                 ToWString(arguments + " " + quotedLink).c_str(),
-                 ToWString(QFileInfo(quotedExecutable).absolutePath()).c_str(),
-                 SW_SHOWNORMAL);
+  QProcess::startDetached(quotedExecutable, { arguments + " " + quotedLink }, QFileInfo(quotedExecutable).absolutePath());
 }
 
 HandlerStorage *registerExecutable(const QDir &storagePath,
@@ -63,7 +62,7 @@ HandlerStorage *registerExecutable(const QDir &storagePath,
                                    const QString &handlerArgs)
 {
   HandlerStorage *storage = nullptr;
-  if (!handlerPath.isEmpty() && !handlerPath.endsWith("nxmhandler.exe", Qt::CaseInsensitive)) {
+  if (!handlerPath.isEmpty() && !handlerPath.endsWith(nxmhandlerExecutable, Qt::CaseInsensitive)) {
     // a foreign or global nxm handler, register ourself and use that handler as
     // an option - if this is another nxmhandler we could run into problems so skip it
     storage = new HandlerStorage(storagePath.path());
@@ -94,9 +93,9 @@ HandlerStorage *loadStorage(bool forceReg)
     baseDir = QDir(qApp->applicationDirPath());
   }
   NxmHandler::LoggerInit(baseDir.filePath("nxmhandler.log"));
-  QSettings handlerReg("HKEY_CURRENT_USER\\Software\\Classes\\nxm\\",
+  QSettings handlerReg(getHandlerRegPath(),
                        QSettings::NativeFormat);
-  QStringList handlerVals = HandlerStorage::stripCall(handlerReg.value("shell/open/command/Default").toString());
+  QStringList handlerVals = HandlerStorage::stripCall(handlerReg.value(handlerRegKey).toString());
   QString handlerPath = handlerVals.front();
   handlerVals.pop_front();
   QString handlerArgs = handlerVals.join(" ");
@@ -107,12 +106,12 @@ HandlerStorage *loadStorage(bool forceReg)
                      QSettings::IniFormat);
   bool noRegister = settings.value("noregister", false).toBool();
   if (globalStorage.exists("nxmhandler.ini") &&
-      handlerPath.endsWith("nxmhandler.exe", Qt::CaseInsensitive) &&
+      handlerPath.endsWith(nxmhandlerExecutable, Qt::CaseInsensitive) &&
       QFile::exists(handlerPath)) {
     // global configuration avaible - use it
     storage = new HandlerStorage(globalStorage.path());
   } else if (handlerBaseDir.exists("nxmhandler.ini") &&
-             handlerPath.endsWith("nxmhandler.exe", Qt::CaseInsensitive) &&
+             handlerPath.endsWith(nxmhandlerExecutable, Qt::CaseInsensitive) &&
              QFile::exists(handlerPath)) {
     // a portable installation is registered to handle links, use its
     // configuration
@@ -276,8 +275,8 @@ int main(int argc, char *argv[])
     } else {
       HandlerWindow win;
       win.setHandlerStorage(storage.get());
-      QSettings handlerReg("HKEY_CURRENT_USER\\Software\\Classes\\nxm\\", QSettings::NativeFormat);
-      QStringList handlerVals = HandlerStorage::stripCall(handlerReg.value("shell/open/command/Default").toString());
+      QSettings handlerReg(getHandlerRegPath(), QSettings::NativeFormat);
+      QStringList handlerVals = HandlerStorage::stripCall(handlerReg.value(handlerRegKey).toString());
       QString handlerPath = handlerVals.front();
       handlerVals.pop_front();
       QString handerArgs = handlerVals.join(" ");

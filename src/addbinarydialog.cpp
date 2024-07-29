@@ -1,7 +1,7 @@
 #include "addbinarydialog.h"
 #include "ui_addbinarydialog.h"
+#include "utility.h"
 #include <QFileDialog>
-
 
 AddBinaryDialog::AddBinaryDialog(const std::vector<std::tuple<QString, QString, QString>> &games, QWidget *parent)
   : QDialog(parent)
@@ -49,5 +49,5 @@ QString AddBinaryDialog::arguments()
 void AddBinaryDialog::on_browseButton_clicked()
 {
   ui->binaryEdit->setText(QFileDialog::getOpenFileName(this, tr("Select Executable"), QString(),
-                                                       tr("Executable (*.exe)")));
+                                                       tr(fileDialogFilter)));
 }
