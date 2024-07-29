@@ -21,7 +21,7 @@ set(SOURCES
 )
 add_executable(nxmhandler)
 mo2_configure_target(nxmhandler NO_SOURCES)
-mo2_target_sources(nxmhandler ${SOURCES})
+target_sources(nxmhandler PRIVATE ${SOURCES})
 set_target_properties(nxmhandler PROPERTIES WIN32_EXECUTABLE TRUE)
 target_link_libraries(nxmhandler PRIVATE Qt6::Core Qt6::Widgets mo2::uibase)
 
