@@ -8,8 +8,16 @@
   "vcpkg-configuration": {
     "default-registry": {
       "kind": "git",
-      "repository": "https://github.com/Kaedras/vcpkg-registry",
-      "baseline": "b3847ddc931623155045e9f458fa936c0f35ff13"
-    }
+      "repository": "https://github.com/microsoft/vcpkg",
+      "baseline": "66248ff4dbafdff577df74e4d9a8e948389fab09"
+    },
+    "registries": [
+      {
+        "kind": "git",
+        "repository": "https://github.com/Kaedras/vcpkg-registry",
+        "baseline": "32e2aa6e072e1a0001ac3d85171ced3fd0eabbf1",
+        "packages": ["mo2-*"]
+      }
+    ]
   }
 }
