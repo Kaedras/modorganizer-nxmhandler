@@ -3,7 +3,7 @@
 
 QString getHandlerRegPath()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() + "nxmhandler.desktop";
+  return QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() + "/nxmhandler.desktop";
 }
 
 QString getGlobalHandlerRegPath()
