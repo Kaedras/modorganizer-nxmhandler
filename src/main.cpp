@@ -44,17 +44,17 @@ void logHandler(QtMsgType type, const QMessageLogContext &context, const QString
 
 void handleLink(const QString &executable, const QString &arguments, const QString &link)
 {
-  QString quotedExecutable(executable);
-  if (!quotedExecutable.contains(QRegularExpression("^\".*\"$"))) {
-    quotedExecutable = '"' + quotedExecutable + '"';
-  }
+  QProcess p;
+  p.setProgram(executable);
+  p.setArguments(QProcess::splitCommand(arguments) << link);
+  p.setWorkingDirectory(QFileInfo(executable).absolutePath());
+  bool result = p.startDetached();
 
-  QString quotedLink(link);
-  if (!quotedLink.contains(QRegularExpression("^\".*\"$"))) {
-    quotedLink = '"' + quotedLink + '"';
+  if (!result)
+  {
+    QMessageBox::warning(nullptr, QObject::tr("Error starting MO2"),
+                               QObject::tr( "Could not start MO2 to handle nxm link: %1. Executable: %2").arg(p.errorString(), executable));
   }
-
-  QProcess::startDetached(quotedExecutable, { arguments + " " + quotedLink }, QFileInfo(quotedExecutable).absolutePath());
 }
 
 HandlerStorage *registerExecutable(const QDir &storagePath,
