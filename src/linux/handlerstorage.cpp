@@ -13,10 +13,9 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
   QFile file(path);
   if (!file.open(QIODeviceBase::WriteOnly | QIODeviceBase::Text))
   {
-    int error = errno;
-    QMessageBox::warning(nullptr, QObject::tr("Error registering proxy"),
-                         QObject::tr( "An error occurred while registering nxmhandler:\n"
-                                     "%1\n").arg(strerror(error)));
+    QMessageBox::warning(nullptr, QObject::tr("Error registering handler"),
+                         QObject::tr( "An error occurred while creating nxmhandler.desktop:\n"
+                                     "%1\n").arg(file.errorString()));
     return;
   }
 
@@ -33,10 +32,36 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
 
   int status = system("xdg-mime default nxmhandler.desktop x-scheme-handler/nxm");
   if(status != 0) {
-    int error = errno;
-    QMessageBox::warning(nullptr, QObject::tr("Error registering proxy"),
+    QString message;
+    switch (status)
+    {
+    case -1:
+      const int error = errno;
+      message = strerror(error);
+      break;
+    case 1:
+      message = QStringLiteral("Error in command line syntax.");
+      break;
+    case 2:
+      message = QStringLiteral("One of the files passed on the command line did not exist.");
+      break;
+    case 3:
+      message = QStringLiteral("A required tool could not be found.");
+      break;
+    case 4:
+      message = QStringLiteral("The action failed.");
+      break;
+    case 5:
+      message = QStringLiteral("No permission to read one of the files passed on the command line.");
+      break;
+    default:
+      message = QStringLiteral("Unknown error.");
+      break;
+    }
+
+    QMessageBox::warning(nullptr, QObject::tr("Error registering handler"),
                          QObject::tr( "An error occurred while registering nxmhandler:\n"
                                      "%1\n"
-                                     R"(Please run "xdg-mime default nxmhandler.desktop x-scheme-handler/nxm" manually.)").arg(strerror(error)));
+                                     R"(Please run "xdg-mime default nxmhandler.desktop x-scheme-handler/nxm" manually.)").arg(message));
   }
 }
