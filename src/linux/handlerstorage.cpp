@@ -36,9 +36,11 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
     switch (status)
     {
     case -1:
-      const int error = errno;
-      message = strerror(error);
-      break;
+      {
+        const int error = errno;
+        message = strerror(error);
+        break;
+      }
     case 1:
       message = u"Error in command line syntax."_s;
       break;
