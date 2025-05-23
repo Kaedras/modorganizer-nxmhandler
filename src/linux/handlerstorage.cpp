@@ -6,9 +6,11 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 
+using namespace Qt::StringLiterals;
+
 void HandlerStorage::registerProxy(const QString &proxyPath)
 {
-  QString path = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() + "/nxmhandler.desktop";
+  QString path = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() % u"/nxmhandler.desktop"_s;
 
   QFile file(path);
   if (!file.open(QIODeviceBase::WriteOnly | QIODeviceBase::Text))
@@ -19,13 +21,11 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
     return;
   }
 
-  QString myExe = QDir::toNativeSeparators(proxyPath).append(" %u");
-
   QTextStream out(&file);
   out << "[Desktop Entry]\n";
   out << "Type=Application\n";
   out << "Name=NXM Handler\n";
-  out << "Exec=" << myExe << "\n";
+  out << "Exec=" << proxyPath << " %u\n";
   out << "StartupNotify=false\n";
   out << "MimeType=x-scheme-handler/nxm\n";
   file.close();
@@ -40,22 +40,22 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
       message = strerror(error);
       break;
     case 1:
-      message = QStringLiteral("Error in command line syntax.");
+      message = u"Error in command line syntax."_s;
       break;
     case 2:
-      message = QStringLiteral("One of the files passed on the command line did not exist.");
+      message = u"One of the files passed on the command line did not exist."_s;
       break;
     case 3:
-      message = QStringLiteral("A required tool could not be found.");
+      message = u"A required tool could not be found."_s;
       break;
     case 4:
-      message = QStringLiteral("The action failed.");
+      message = u"The action failed."_s;
       break;
     case 5:
-      message = QStringLiteral("No permission to read one of the files passed on the command line.");
+      message = u"No permission to read one of the files passed on the command line."_s;
       break;
     default:
-      message = QStringLiteral("Unknown error.");
+      message = u"Unknown error."_s;
       break;
     }
 
