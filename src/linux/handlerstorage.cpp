@@ -31,7 +31,7 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
   out << "MimeType=x-scheme-handler/nxm\n";
   file.close();
 
-  int status = system("xdg-mime default nxmproxy.desktop x-scheme-handler/nxm");
+  int status = system("xdg-mime default nxmhandler.desktop x-scheme-handler/nxm");
   if(status != 0) {
     int error = errno;
     QMessageBox::warning(nullptr, QObject::tr("Error registering proxy"),
