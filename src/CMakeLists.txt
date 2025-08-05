@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-if (Linux)
+if (LINUX)
     find_package(OpenGL REQUIRED)
 endif()
 
