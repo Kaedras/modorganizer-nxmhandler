@@ -29,13 +29,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="addbinarydialog.cpp" line="51"/>
-        <source>Select Executable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="addbinarydialog.cpp" line="52"/>
-        <source>Executable (*.exe)</source>
+        <source>Select Executable</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -127,6 +122,36 @@ Use this if you moved Mod Organizer or if you uninstalled the Mod Organizer inst
 </context>
 <context>
     <name>QObject</name>
+    <message>
+        <location filename="linux/handlerstorage.cpp" line="18"/>
+        <location filename="linux/handlerstorage.cpp" line="64"/>
+        <source>Error registering handler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="linux/handlerstorage.cpp" line="19"/>
+        <source>An error occurred while creating nxmhandler.desktop:
+%1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="linux/handlerstorage.cpp" line="65"/>
+        <source>An error occurred while registering nxmhandler:
+%1
+Please run &quot;xdg-mime default nxmhandler.desktop x-scheme-handler/nxm&quot; manually.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="56"/>
+        <source>Error starting MO2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="57"/>
+        <source>Could not start MO2 to handle nxm link: %1. Executable: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="main.cpp" line="125"/>
         <source>Change Handler?</source>
