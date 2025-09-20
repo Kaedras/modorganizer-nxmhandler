@@ -10,7 +10,7 @@ using namespace Qt::StringLiterals;
 
 void HandlerStorage::registerProxy(const QString &proxyPath)
 {
-  QString path = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() % u"/nxmhandler.desktop"_s;
+  QString path = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() % "/nxmhandler.desktop"_L1;
 
   QFile file(path);
   if (!file.open(QIODeviceBase::WriteOnly | QIODeviceBase::Text))
