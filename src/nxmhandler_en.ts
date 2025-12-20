@@ -102,18 +102,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="handlerwindow.cpp" line="37"/>
-        <location filename="handlerwindow.cpp" line="124"/>
+        <location filename="handlerwindow.cpp" line="38"/>
+        <location filename="handlerwindow.cpp" line="125"/>
         <source>&lt;Current&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="handlerwindow.cpp" line="119"/>
+        <location filename="handlerwindow.cpp" line="120"/>
         <source>Change handler registration?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="handlerwindow.cpp" line="120"/>
+        <location filename="handlerwindow.cpp" line="121"/>
         <source>This will make the nxmhandler.exe you called the primary handler registered in the system.
 That has no immediate impact on how links are handled.
 Use this if you moved Mod Organizer or if you uninstalled the Mod Organizer installation that was previously registered. Continue?</source>

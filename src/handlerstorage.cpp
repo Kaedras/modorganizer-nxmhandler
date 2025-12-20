@@ -222,7 +222,7 @@ void HandlerStorage::loadStore()
   info.executable = handlerValues.front();
   handlerValues.pop_front();
   info.arguments = handlerValues.join(" ");
-  if (!info.executable.isEmpty() && !info.executable.endsWith(nxmhandlerExecutable, Qt::CaseInsensitive)) {
+  if (!info.executable.isEmpty() && !isNxmHandlerExecutable(info.executable)) {
     bool known = false;
     for (auto iter = m_Handlers.begin(); iter != m_Handlers.end(); ++iter) {
       if ((iter->executable == info.executable) && (iter->arguments  == info.arguments)) {

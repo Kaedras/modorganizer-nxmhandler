@@ -63,16 +63,16 @@ HandlerStorage *registerExecutable(const QDir &storagePath,
                                    const QString &handlerArgs)
 {
   HandlerStorage *storage = nullptr;
-  if (!handlerPath.isEmpty() && !handlerPath.endsWith(nxmhandlerExecutable, Qt::CaseInsensitive)) {
+  if (!handlerPath.isEmpty() && !isNxmHandlerExecutable(handlerPath)) {
     // a foreign or global nxm handler, register ourself and use that handler as
     // an option - if this is another nxmhandler we could run into problems so skip it
     storage = new HandlerStorage(storagePath.path());
     storage->registerHandler(handlerPath, handlerArgs, false);
-    storage->registerProxy(QCoreApplication::applicationFilePath());
+    storage->registerProxy(getApplicationFilePath());
   } else {
     // no handler registered yet or the existing handler is invalid -> overwrite
     storage = new HandlerStorage(storagePath.path());
-    storage->registerProxy(QCoreApplication::applicationFilePath());
+    storage->registerProxy(getApplicationFilePath());
   }
   return storage;
 }
@@ -91,7 +91,7 @@ HandlerStorage *loadStorage(bool forceReg)
   if (globalStorage.exists()) {
     baseDir = globalStorage;
   } else {
-    baseDir = QDir(qApp->applicationDirPath());
+    baseDir = QDir(getApplicationDirPath());
   }
   NxmHandler::LoggerInit(baseDir.filePath("nxmhandler.log"));
   QSettings handlerReg(getHandlerRegPath(),
@@ -107,19 +107,19 @@ HandlerStorage *loadStorage(bool forceReg)
                      QSettings::IniFormat);
   bool noRegister = settings.value("noregister", false).toBool();
   if (globalStorage.exists("nxmhandler.ini") &&
-      handlerPath.endsWith(nxmhandlerExecutable, Qt::CaseInsensitive) &&
+      isNxmHandlerExecutable(handlerPath) &&
       QFile::exists(handlerPath)) {
     // global configuration avaible - use it
     storage = new HandlerStorage(globalStorage.path());
   } else if (handlerBaseDir.exists("nxmhandler.ini") &&
-             handlerPath.endsWith(nxmhandlerExecutable, Qt::CaseInsensitive) &&
+             isNxmHandlerExecutable(handlerPath) &&
              QFile::exists(handlerPath)) {
     // a portable installation is registered to handle links, use its
     // configuration
     storage = new HandlerStorage(QFileInfo(handlerPath).absolutePath());
     if (forceReg &&
         (QString::compare(
-            QDir::toNativeSeparators(QCoreApplication::applicationFilePath()),
+            QDir::toNativeSeparators(getApplicationFilePath()),
             handlerPath, Qt::CaseInsensitive))) {
       if (QMessageBox::question(
               nullptr, QObject::tr("Change Handler?"),
@@ -128,7 +128,7 @@ HandlerStorage *loadStorage(bool forceReg)
                           "replace it? This is usually not necessary unless "
                           "the other installation is defective."),
               QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
-        storage->registerProxy(QCoreApplication::applicationFilePath());
+        storage->registerProxy(getApplicationFilePath());
       }
     }
   } else if (!noRegister || forceReg) {

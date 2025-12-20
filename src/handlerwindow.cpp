@@ -1,6 +1,7 @@
 #include "handlerwindow.h"
 #include "ui_handlerwindow.h"
 #include "addbinarydialog.h"
+#include "utility.h"
 #include <QMenu>
 #include <QMessageBox>
 #include <QShortcut>
@@ -124,6 +125,6 @@ void HandlerWindow::on_registerButton_clicked()
     ui->handlerView->setText(tr("<Current>"));
     ui->registerButton->setEnabled(false);
 
-    m_Storage->registerProxy(QCoreApplication::applicationFilePath());
+    m_Storage->registerProxy(getApplicationFilePath());
   }
 }
