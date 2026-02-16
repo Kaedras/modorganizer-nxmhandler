@@ -4,43 +4,85 @@
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
-#include <QStandardPaths>
 
+using namespace std::string_literals;
 using namespace Qt::StringLiterals;
 
 void HandlerStorage::registerProxy(const QString &proxyPath)
 {
-  QString path = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() % "/nxmhandler.desktop"_L1;
+  // create a list of application directories based on XDG Base Directory Specification Version 0.8
+  // see https://specifications.freedesktop.org/basedir/latest/ for details
 
-  QFile file(path);
-  if (!file.open(QIODeviceBase::WriteOnly | QIODeviceBase::Text))
-  {
-    QMessageBox::warning(nullptr, QObject::tr("Error registering handler"),
-                         QObject::tr( "An error occurred while creating nxmhandler.desktop:\n"
-                                     "%1\n").arg(file.errorString()));
-    return;
+  QString xdgDataHome = qEnvironmentVariable("XDG_DATA_HOME");
+  if (xdgDataHome.isEmpty()) {
+    // If $XDG_DATA_HOME is either not set or empty, a default equal to $HOME/.local/share should be used.
+    xdgDataHome = QDir::homePath() % "/.local/share"_L1;
+  }
+  QStringList dataDirs = {xdgDataHome};
+  const QString xdgDataDirs = qEnvironmentVariable("XDG_DATA_DIRS");
+  if (xdgDataDirs.isEmpty()) {
+    // If $XDG_DATA_DIRS is either not set or empty, a value equal to /usr/local/share/:/usr/share/ should be used.
+    dataDirs << u"/usr/local/share"_s;
+    dataDirs << u"/usr/share"_s;
+  } else {
+    dataDirs.append(xdgDataDirs.split(':'));
+  }
+  for (auto& dir:dataDirs) {
+    dir.append(u"/applications"_s);
   }
 
-  QTextStream out(&file);
-  out << "[Desktop Entry]\n";
-  out << "Type=Application\n";
-  out << "Name=NXM Handler\n";
-  out << "Exec=" << proxyPath << " %u\n";
-  out << "StartupNotify=false\n";
-  out << "MimeType=x-scheme-handler/nxm\n";
-  file.close();
+  // look up nxmhandler desktop file
+  QString desktopFilePath;
+  std::string desktopFileName;
+  const QStringList filter = {u"*nxmhandler*.desktop"_s};
+  for (const auto& dir : dataDirs) {
+    QFileInfoList entryList = QDir(dir).entryInfoList(filter, QDir::Files | QDir::NoDotAndDotDot);
+    if (!entryList.empty()) {
+      desktopFilePath = entryList.first().absoluteFilePath();
+      desktopFileName = entryList.first().fileName().toStdString();
+      break;
+    }
+  }
 
-  int status = system("xdg-mime default nxmhandler.desktop x-scheme-handler/nxm");
+  // only make changes to desktop files if not running as flatpak
+  if (getenv("container") != "flatpak"s) {
+    if (desktopFilePath.isEmpty()) {
+      // desktop file does not exist, create it in XDG_DATA_HOME
+      desktopFilePath = xdgDataHome % "/applications/nxmhandler.desktop"_L1;
+      desktopFileName = "nxmhandler.desktop";
+    }
+
+    QFile file(desktopFilePath);
+    if (!file.open(QIODeviceBase::WriteOnly | QIODeviceBase::Text)) {
+      QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"),
+                           QObject::tr( "An error occurred while creating %1: %2").arg(desktopFilePath, file.errorString()));
+      return;
+    }
+
+    QTextStream out(&file);
+    out << "[Desktop Entry]\n";
+    out << "Type=Application\n";
+    out << "Name=NXM Handler\n";
+    out << "Exec=" << proxyPath << " %u\n";
+    out << "StartupNotify=false\n";
+    out << "MimeType=x-scheme-handler/nxm\n";
+    file.close();
+  } else {
+    if (desktopFilePath.isEmpty()) {
+      QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"), QObject::tr("Application is running as flatpak and no desktop file has been found"));
+      return;
+    }
+  }
+
+  // register nxm handler
+  std::string command = std::format("xdg-mime default {} x-scheme-handler/nxm", desktopFileName);
+  int status = system(command.c_str());
   if(status != 0) {
     QString message;
-    switch (status)
-    {
+    switch (status) {
     case -1:
-      {
-        const int error = errno;
-        message = strerror(error);
-        break;
-      }
+      message = strerror(errno);
+      break;
     case 1:
       message = u"Error in command line syntax."_s;
       break;
@@ -61,9 +103,7 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
       break;
     }
 
-    QMessageBox::warning(nullptr, QObject::tr("Error registering handler"),
-                         QObject::tr( "An error occurred while registering nxmhandler:\n"
-                                     "%1\n"
-                                     R"(Please run "xdg-mime default nxmhandler.desktop x-scheme-handler/nxm" manually.)").arg(message));
+    QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"),
+                         QObject::tr( "An error occurred while registering nxmhandler: %1").arg(message));
   }
 }
