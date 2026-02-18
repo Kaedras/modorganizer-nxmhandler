@@ -4,12 +4,20 @@
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
+#include <QStandardPaths>
 
 using namespace std::string_literals;
 using namespace Qt::StringLiterals;
 
 void HandlerStorage::registerProxy(const QString &proxyPath)
 {
+  // look for xdg-mime
+  if (QStandardPaths::findExecutable(u"xdg-mime"_s).isEmpty()) {
+    QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"),
+                     QObject::tr( "Could not find xdg-mime"));
+    return;
+  }
+
   // create a list of application directories based on XDG Base Directory Specification Version 0.8
   // see https://specifications.freedesktop.org/basedir/latest/ for details
 
