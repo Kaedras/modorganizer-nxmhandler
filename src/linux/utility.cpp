@@ -29,16 +29,16 @@ QString getGlobalHandlerRegPath()
 
 QString getApplicationFilePath()
 {
-  QString executable = qgetenv("APPIMAGE");
+  QString executable = qEnvironmentVariable("APPIMAGE");
   if (!executable.isEmpty()) {
     return executable;
   }
-  return  QCoreApplication::applicationFilePath();
+  return QCoreApplication::applicationFilePath();
 }
 
 QString getApplicationDirPath()
 {
-  QString appImage = qgetenv("APPIMAGE");
+  QString appImage = qEnvironmentVariable("APPIMAGE");
   if (!appImage.isEmpty()) {
     const qsizetype lastSlash = appImage.lastIndexOf('/');
     appImage.truncate(lastSlash);
@@ -48,8 +48,7 @@ QString getApplicationDirPath()
 }
 
 bool isNxmHandlerExecutable(const QString& str) {
-  const QString appImage = qgetenv("APPIMAGE");
-  if (!appImage.isEmpty()) {
+  if (getenv("APPIMAGE")) {
     return str.endsWith("nxmhandler-x86_64.AppImage"_L1, Qt::CaseInsensitive);
   }
 
