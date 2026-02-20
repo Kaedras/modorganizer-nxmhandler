@@ -14,7 +14,7 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
   // look for xdg-mime
   if (QStandardPaths::findExecutable(u"xdg-mime"_s).isEmpty()) {
     QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"),
-                     QObject::tr( "Could not find xdg-mime"));
+                     QObject::tr("Could not find xdg-mime"));
     return;
   }
 
@@ -45,7 +45,7 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
     QFile file(desktopFilePath);
     if (!file.open(QIODeviceBase::WriteOnly | QIODeviceBase::Text)) {
       QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"),
-                           QObject::tr( "An error occurred while creating %1: %2").arg(desktopFilePath, file.errorString()));
+                           QObject::tr("An error occurred while creating %1: %2").arg(desktopFilePath, file.errorString()));
       return;
     }
 
@@ -94,6 +94,6 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
     }
 
     QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"),
-                         QObject::tr( "An error occurred while registering nxmhandler: %1").arg(message));
+                         QObject::tr("An error occurred while registering nxmhandler: %1").arg(message));
   }
 }
