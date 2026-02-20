@@ -124,9 +124,9 @@ Use this if you moved Mod Organizer or if you uninstalled the Mod Organizer inst
     <name>QObject</name>
     <message>
         <location filename="linux/handlerstorage.cpp" line="16"/>
-        <location filename="linux/handlerstorage.cpp" line="65"/>
-        <location filename="linux/handlerstorage.cpp" line="80"/>
-        <location filename="linux/handlerstorage.cpp" line="114"/>
+        <location filename="linux/handlerstorage.cpp" line="47"/>
+        <location filename="linux/handlerstorage.cpp" line="62"/>
+        <location filename="linux/handlerstorage.cpp" line="96"/>
         <source>Error registering nxm handler</source>
         <translation type="unfinished"></translation>
     </message>
@@ -137,17 +137,17 @@ Use this if you moved Mod Organizer or if you uninstalled the Mod Organizer inst
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="linux/handlerstorage.cpp" line="66"/>
+        <location filename="linux/handlerstorage.cpp" line="48"/>
         <source>An error occurred while creating %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="linux/handlerstorage.cpp" line="80"/>
+        <location filename="linux/handlerstorage.cpp" line="62"/>
         <source>Application is running as flatpak and no desktop file has been found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="linux/handlerstorage.cpp" line="115"/>
+        <location filename="linux/handlerstorage.cpp" line="97"/>
         <source>An error occurred while registering nxmhandler: %1</source>
         <translation type="unfinished"></translation>
     </message>
