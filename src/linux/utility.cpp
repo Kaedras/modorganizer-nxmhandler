@@ -1,4 +1,6 @@
 #include <QCoreApplication>
+#include <QDir>
+#include <QFileInfo>
 #include <QString>
 #include <QStandardPaths>
 
@@ -6,6 +8,17 @@ using namespace Qt::StringLiterals;
 
 QString getHandlerRegPath()
 {
+  const QStringList applicationDirs =
+    QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+
+  const QStringList filter = {u"*nxmhandler.desktop"_s};
+  for (const auto& dir : applicationDirs) {
+    QFileInfoList entryList = QDir(dir).entryInfoList(filter, QDir::Files | QDir::NoDotAndDotDot);
+    if (!entryList.empty()) {
+      return entryList.first().absoluteFilePath();
+    }
+  }
+
   return QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() % "/nxmhandler.desktop"_L1;
 }
 
