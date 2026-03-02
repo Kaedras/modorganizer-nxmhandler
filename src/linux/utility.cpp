@@ -38,18 +38,17 @@ QString getApplicationFilePath()
 
 QString getApplicationDirPath()
 {
-  QString appImage = qEnvironmentVariable("APPIMAGE");
-  if (!appImage.isEmpty()) {
-    const qsizetype lastSlash = appImage.lastIndexOf('/');
-    appImage.truncate(lastSlash);
-    return appImage;
+  QString appDir = qEnvironmentVariable("APPDIR");
+  if (!appDir.isEmpty()) {
+    return appDir;
   }
   return QCoreApplication::applicationDirPath();
 }
 
 bool isNxmHandlerExecutable(const QString& str) {
-  if (getenv("APPIMAGE")) {
-    return str.endsWith("nxmhandler-x86_64.AppImage"_L1, Qt::CaseInsensitive);
+  if (getenv("APPIMAGE") != nullptr) {
+    // nxmhandler is a subcommand in the modorganizer appimage
+    return str.endsWith("/ModOrganizer-x86_64.AppImage"_L1, Qt::CaseInsensitive);
   }
 
   return str.endsWith("nxmhandler"_L1, Qt::CaseInsensitive);

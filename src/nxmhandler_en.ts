@@ -125,8 +125,8 @@ Use this if you moved Mod Organizer or if you uninstalled the Mod Organizer inst
     <message>
         <location filename="linux/handlerstorage.cpp" line="16"/>
         <location filename="linux/handlerstorage.cpp" line="47"/>
-        <location filename="linux/handlerstorage.cpp" line="62"/>
-        <location filename="linux/handlerstorage.cpp" line="96"/>
+        <location filename="linux/handlerstorage.cpp" line="67"/>
+        <location filename="linux/handlerstorage.cpp" line="101"/>
         <source>Error registering nxm handler</source>
         <translation type="unfinished"></translation>
     </message>
@@ -142,12 +142,12 @@ Use this if you moved Mod Organizer or if you uninstalled the Mod Organizer inst
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="linux/handlerstorage.cpp" line="62"/>
+        <location filename="linux/handlerstorage.cpp" line="67"/>
         <source>Application is running as flatpak and no desktop file has been found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="linux/handlerstorage.cpp" line="97"/>
+        <location filename="linux/handlerstorage.cpp" line="102"/>
         <source>An error occurred while registering nxmhandler: %1</source>
         <translation type="unfinished"></translation>
     </message>

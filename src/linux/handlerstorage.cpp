@@ -53,7 +53,12 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
     out << "[Desktop Entry]\n";
     out << "Type=Application\n";
     out << "Name=NXM Handler\n";
-    out << "Exec=" << proxyPath << " %u\n";
+    out << "Exec=" << proxyPath;
+    // append `nxmhandler` subcommand when running as appimage
+    if (getenv("APPIMAGE") != nullptr) {
+      out << " nxmhandler";
+    }
+    out << " %u\n";
     out << "StartupNotify=false\n";
     out << "MimeType=x-scheme-handler/nxm\n";
     file.close();
