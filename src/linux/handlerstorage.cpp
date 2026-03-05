@@ -35,10 +35,10 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
   }
 
   // only make changes to desktop files if not running as flatpak
-  if (getenv("container") != "flatpak"s) {
+  if (getenv("container") == nullptr) {
     if (desktopFilePath.isEmpty()) {
       // desktop file does not exist, create it in XDG_DATA_HOME
-      desktopFilePath = applicationDirs.first() % "/applications/nxmhandler.desktop"_L1;
+      desktopFilePath = applicationDirs.first() % "/nxmhandler.desktop"_L1;
       desktopFileName = "nxmhandler.desktop";
     }
 
