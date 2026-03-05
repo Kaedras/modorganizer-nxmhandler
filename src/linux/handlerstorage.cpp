@@ -60,6 +60,7 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
     }
     out << " %u\n";
     out << "StartupNotify=false\n";
+    out << "NoDisplay=true\n";
     out << "MimeType=x-scheme-handler/nxm\n";
     file.close();
   } else {
