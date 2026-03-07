@@ -125,15 +125,14 @@ Use this if you moved Mod Organizer or if you uninstalled the Mod Organizer inst
     <message>
         <location filename="linux/handlerstorage.cpp" line="16"/>
         <location filename="linux/handlerstorage.cpp" line="47"/>
-        <location filename="linux/handlerstorage.cpp" line="67"/>
-        <location filename="linux/handlerstorage.cpp" line="101"/>
+        <location filename="linux/handlerstorage.cpp" line="68"/>
+        <location filename="linux/handlerstorage.cpp" line="102"/>
         <source>Error registering nxm handler</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="linux/handlerstorage.cpp" line="17"/>
         <source>Could not find xdg-mime</source>
-        <oldsource>Could not find &apos;xdg-mime&apos;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -142,12 +141,12 @@ Use this if you moved Mod Organizer or if you uninstalled the Mod Organizer inst
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="linux/handlerstorage.cpp" line="67"/>
+        <location filename="linux/handlerstorage.cpp" line="68"/>
         <source>Application is running as flatpak and no desktop file has been found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="linux/handlerstorage.cpp" line="102"/>
+        <location filename="linux/handlerstorage.cpp" line="103"/>
         <source>An error occurred while registering nxmhandler: %1</source>
         <translation type="unfinished"></translation>
     </message>
