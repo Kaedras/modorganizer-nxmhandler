@@ -19,8 +19,8 @@ install(FILES $<TARGET_FILE:nxmhandler> DESTINATION bin
         GROUP_READ GROUP_EXECUTE
         WORLD_READ WORLD_EXECUTE
 )
-if (WIN32)
-    install(FILES $<TARGET_PDB_FILE:nxmhandler> DESTINATION pdb)
-endif()
+mo2_install_pdb(TARGET nxmhandler)
 
-mo2_deploy_qt(BINARIES nxmhandler.exe NOPLUGINS)
+if (WIN32)
+    mo2_deploy_qt(BINARIES nxmhandler.exe NOPLUGINS)
+endif()
