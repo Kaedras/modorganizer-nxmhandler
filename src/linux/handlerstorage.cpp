@@ -24,7 +24,7 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
   // look up nxmhandler desktop file
   QString desktopFilePath;
   std::string desktopFileName;
-  const QStringList filter = {u"*nxmhandler*.desktop"_s};
+  const QStringList filter = {u"*nxmhandler.desktop"_s};
   for (const auto& dir : applicationDirs) {
     QFileInfoList entryList = QDir(dir).entryInfoList(filter, QDir::Files | QDir::NoDotAndDotDot);
     if (!entryList.empty()) {
