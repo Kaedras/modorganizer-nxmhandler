@@ -34,7 +34,7 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
     }
   }
 
-  // only make changes to desktop files if not running as flatpak
+  // only make changes to desktop files if not running in a container
   if (getenv("container") == nullptr) {
     if (desktopFilePath.isEmpty()) {
       // desktop file does not exist, create it in XDG_DATA_HOME
