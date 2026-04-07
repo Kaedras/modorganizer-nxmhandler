@@ -15,7 +15,7 @@ QString getGlobalHandlerRegPath()
 
 QString getApplicationFilePath()
 {
-  return  QCoreApplication::applicationFilePath();
+  return QCoreApplication::applicationFilePath();
 }
 
 QString getApplicationDirPath()
@@ -23,6 +23,7 @@ QString getApplicationDirPath()
   return QCoreApplication::applicationDirPath();
 }
 
-bool isNxmHandlerExecutable(const QString& str) {
+bool isNxmHandlerExecutable(const QString& str)
+{
   return str.endsWith("nxmhandler.exe"_L1, Qt::CaseInsensitive);
 }

@@ -45,7 +45,8 @@ QString getApplicationDirPath()
   return QCoreApplication::applicationDirPath();
 }
 
-bool isNxmHandlerExecutable(const QString& str) {
+bool isNxmHandlerExecutable(const QString& str)
+{
   if (getenv("APPIMAGE") != nullptr) {
     // nxmhandler is a subcommand in the modorganizer appimage
     return str.endsWith("/ModOrganizer-x86_64.AppImage"_L1, Qt::CaseInsensitive);
