@@ -1,3 +1,4 @@
+#include <QCoreApplication>
 #include <QString>
 
 using namespace Qt::StringLiterals;
