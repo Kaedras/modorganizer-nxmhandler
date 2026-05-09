@@ -9,7 +9,8 @@ mo2_configure_target(nxmhandler)
 set_target_properties(nxmhandler PROPERTIES WIN32_EXECUTABLE TRUE)
 target_link_libraries(nxmhandler PRIVATE Qt6::Core Qt6::Widgets mo2::uibase)
 
-install(TARGETS nxmhandler DESTINATION bin)
+include(GNUInstallDirs)
+install(TARGETS nxmhandler DESTINATION ${CMAKE_INSTALL_BINDIR})
 mo2_install_pdb(TARGET nxmhandler)
 
 if (WIN32)
