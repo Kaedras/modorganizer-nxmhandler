@@ -15,4 +15,6 @@ mo2_install_pdb(TARGET nxmhandler)
 
 if (WIN32)
     mo2_deploy_qt(BINARIES nxmhandler.exe NOPLUGINS)
+else ()
+    set_target_properties(nxmhandler PROPERTIES INSTALL_RPATH "$ORIGIN;$ORIGIN/lib")
 endif()
