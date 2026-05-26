@@ -49,19 +49,17 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
       return;
     }
 
+    const QString fileTemplate = u"[Desktop Entry]\n"
+                           "Type=Application\n"
+                           "Name=NXM Handler\n"
+                           "Exec=%1 %u\n"
+                           "StartupNotify=false\n"
+                           "NoDisplay=true\n"
+                           "MimeType=x-scheme-handler/nxm\n"_s;
+
     QTextStream out(&file);
-    out << "[Desktop Entry]\n";
-    out << "Type=Application\n";
-    out << "Name=NXM Handler\n";
-    out << "Exec=" << proxyPath;
-    // append `nxmhandler` subcommand when running as appimage
-    if (getenv("APPIMAGE") != nullptr) {
-      out << " nxmhandler";
-    }
-    out << " %u\n";
-    out << "StartupNotify=false\n";
-    out << "NoDisplay=true\n";
-    out << "MimeType=x-scheme-handler/nxm\n";
+    out << fileTemplate.arg(getenv("APPIMAGE") == nullptr? proxyPath : proxyPath % " nxmhandler"_L1);
+
     file.close();
   } else {
     if (desktopFilePath.isEmpty()) {
