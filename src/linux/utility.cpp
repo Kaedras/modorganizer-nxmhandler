@@ -1,30 +1,35 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
-#include <QString>
+#include <QRegularExpression>
 #include <QStandardPaths>
+#include <QString>
 
 using namespace Qt::StringLiterals;
 
-QString getHandlerRegPath()
+QString getHandlerRegPath(const QString&)
 {
-  const QStringList applicationDirs =
-    QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+  if (getenv("APPIMAGE") != nullptr) {
+    const QStringList applicationDirs =
+        QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
 
-  const QStringList filter = {u"*nxmhandler.desktop"_s};
-  for (const auto& dir : applicationDirs) {
-    QFileInfoList entryList = QDir(dir).entryInfoList(filter, QDir::Files | QDir::NoDotAndDotDot);
-    if (!entryList.empty()) {
-      return entryList.first().absoluteFilePath();
+    const QStringList filter = {u"*nxmhandler.desktop"_s};
+    for (const auto& dir : applicationDirs) {
+      QFileInfoList entryList =
+          QDir(dir).entryInfoList(filter, QDir::Files | QDir::NoDotAndDotDot);
+      if (!entryList.empty()) {
+        return entryList.first().absoluteFilePath();
+      }
     }
   }
 
-  return QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation).first() % "/nxmhandler.desktop"_L1;
+  return QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) %
+         "/nxmhandler.desktop"_L1;
 }
 
 QString getGlobalHandlerRegPath()
 {
-  return getHandlerRegPath();
+  return getHandlerRegPath({});
 }
 
 QString getApplicationFilePath()
@@ -49,7 +54,8 @@ bool isNxmHandlerExecutable(const QString& str)
 {
   if (getenv("APPIMAGE") != nullptr) {
     // nxmhandler is a subcommand in the modorganizer appimage
-    return str.endsWith("/ModOrganizer-x86_64.AppImage"_L1, Qt::CaseInsensitive);
+    static const QRegularExpression regex(u"ModOrganizer-.*.AppImage"_s);
+    return str.contains(regex);
   }
 
   return str.endsWith("nxmhandler"_L1, Qt::CaseInsensitive);

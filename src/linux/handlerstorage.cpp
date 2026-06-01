@@ -6,72 +6,16 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 
-using namespace std::string_literals;
+using namespace std;
 using namespace Qt::StringLiterals;
 
-void HandlerStorage::registerProxy(const QString &proxyPath)
+// register nxm handler
+void register_(const string& desktopFileName, const string& schema)
 {
-  // look for xdg-mime
-  if (QStandardPaths::findExecutable(u"xdg-mime"_s).isEmpty()) {
-    QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"),
-                     QObject::tr("Could not find xdg-mime"));
-    return;
-  }
-
-  const QStringList applicationDirs =
-    QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
-
-  // look up nxmhandler desktop file
-  QString desktopFilePath;
-  std::string desktopFileName;
-  const QStringList filter = {u"*nxmhandler.desktop"_s};
-  for (const auto& dir : applicationDirs) {
-    QFileInfoList entryList = QDir(dir).entryInfoList(filter, QDir::Files | QDir::NoDotAndDotDot);
-    if (!entryList.empty()) {
-      desktopFilePath = entryList.first().absoluteFilePath();
-      desktopFileName = entryList.first().fileName().toStdString();
-      break;
-    }
-  }
-
-  // only make changes to desktop files if not running in a container
-  if (getenv("container") == nullptr) {
-    if (desktopFilePath.isEmpty()) {
-      // desktop file does not exist, create it in XDG_DATA_HOME
-      desktopFilePath = applicationDirs.first() % "/nxmhandler.desktop"_L1;
-      desktopFileName = "nxmhandler.desktop";
-    }
-
-    QFile file(desktopFilePath);
-    if (!file.open(QIODeviceBase::WriteOnly | QIODeviceBase::Text)) {
-      QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"),
-                           QObject::tr("An error occurred while creating %1: %2").arg(desktopFilePath, file.errorString()));
-      return;
-    }
-
-    const QString fileTemplate = u"[Desktop Entry]\n"
-                           "Type=Application\n"
-                           "Name=NXM Handler\n"
-                           "Exec=%1 %u\n"
-                           "StartupNotify=false\n"
-                           "NoDisplay=true\n"
-                           "MimeType=x-scheme-handler/nxm\n"_s;
-
-    QTextStream out(&file);
-    out << fileTemplate.arg(getenv("APPIMAGE") == nullptr? proxyPath : proxyPath % " nxmhandler"_L1);
-
-    file.close();
-  } else {
-    if (desktopFilePath.isEmpty()) {
-      QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"), QObject::tr("Application is running as flatpak and no desktop file has been found"));
-      return;
-    }
-  }
-
-  // register nxm handler
-  std::string command = std::format("xdg-mime default {} x-scheme-handler/nxm", desktopFileName);
+  std::string command =
+      std::format("xdg-mime default {} x-scheme-handler/{}", desktopFileName, schema);
   int status = system(command.c_str());
-  if(status != 0) {
+  if (status != 0) {
     QString message;
     switch (status) {
     case -1:
@@ -97,7 +41,78 @@ void HandlerStorage::registerProxy(const QString &proxyPath)
       break;
     }
 
-    QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"),
-                         QObject::tr("An error occurred while registering nxmhandler: %1").arg(message));
+    QMessageBox::warning(
+        nullptr, QObject::tr("Error registering nxm handler"),
+        QObject::tr("An error occurred while registering nxmhandler: %1").arg(message));
   }
+}
+
+void HandlerStorage::registerSchemaProxy(const QString& proxyPath,
+                                         const QString& schema)
+{
+  // look for xdg-mime
+  if (QStandardPaths::findExecutable(u"xdg-mime"_s).isEmpty()) {
+    QMessageBox::warning(nullptr, QObject::tr("Error registering url handler"),
+                         QObject::tr("Could not find xdg-mime"));
+    return;
+  }
+
+  const QStringList applicationDirs =
+      QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+
+  // look up nxmhandler desktop file
+  QString desktopFilePath;
+  std::string desktopFileName;
+  const QStringList filter = {u"*nxmhandler.desktop"_s};
+  for (const auto& dir : applicationDirs) {
+    QFileInfoList entryList =
+        QDir(dir).entryInfoList(filter, QDir::Files | QDir::NoDotAndDotDot);
+    if (!entryList.empty()) {
+      desktopFilePath = entryList.first().absoluteFilePath();
+      desktopFileName = entryList.first().fileName().toStdString();
+      break;
+    }
+  }
+
+  // only make changes to desktop files if not running in a container
+  if (getenv("container") == nullptr) {
+    if (desktopFilePath.isEmpty()) {
+      // desktop file does not exist, create it in XDG_DATA_HOME
+      desktopFilePath = applicationDirs.first() % "/nxmhandler.desktop"_L1;
+      desktopFileName = "nxmhandler.desktop";
+    }
+
+    QFile file(desktopFilePath);
+    if (!file.open(QIODeviceBase::WriteOnly | QIODeviceBase::Text)) {
+      QMessageBox::warning(nullptr, QObject::tr("Error registering nxm handler"),
+                           QObject::tr("An error occurred while creating %1: %2")
+                               .arg(desktopFilePath, file.errorString()));
+      return;
+    }
+
+    const QString fileTemplate =
+        u"[Desktop Entry]\n"
+        "Type=Application\n"
+        "Name=NXM Handler\n"
+        "Exec=%1 %u\n"
+        "StartupNotify=false\n"
+        "NoDisplay=true\n"
+        "MimeType=x-scheme-handler/nxm;x-scheme-handler/modl\n"_s;
+
+    QTextStream out(&file);
+    out << fileTemplate.arg(
+        getenv("APPIMAGE") == nullptr ? proxyPath : proxyPath % " nxmhandler"_L1);
+
+    file.close();
+  } else {
+    if (desktopFilePath.isEmpty()) {
+      QMessageBox::warning(
+          nullptr, QObject::tr("Error registering nxm handler"),
+          QObject::tr(
+              "Application is running as flatpak and no desktop file has been found"));
+      return;
+    }
+  }
+
+  register_(desktopFileName, schema.toStdString());
 }

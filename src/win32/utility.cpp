@@ -3,14 +3,14 @@
 
 using namespace Qt::StringLiterals;
 
-QString getHandlerRegPath()
+QString getHandlerRegPath(const QString& schema)
 {
-  return "HKEY_CURRENT_USER\\Software\\Classes\\nxm\\";
+  return "HKEY_CURRENT_USER\\Software\\Classes\\"_L1 % schema % '\\';
 }
 
 QString getGlobalHandlerRegPath()
 {
-  return "HKEY_CLASSES_ROOT\\nxm\\";
+  return u"HKEY_CLASSES_ROOT\\nxm\\"_s;
 }
 
 QString getApplicationFilePath()
