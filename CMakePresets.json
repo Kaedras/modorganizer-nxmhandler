@@ -79,6 +79,10 @@
       "name": "vs2022-windows",
       "resolvePackageReferences": "on",
       "configurePreset": "vs2022-windows"
+    },
+    {
+      "name": "linux",
+      "configurePreset": "linux"
     }
   ],
   "version": 4
