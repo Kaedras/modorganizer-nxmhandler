@@ -1,5 +1,4 @@
 #include <QCoreApplication>
-#include <QDir>
 #include <QFileInfo>
 #include <QRegularExpression>
 #include <QStandardPaths>
@@ -9,18 +8,10 @@ using namespace Qt::StringLiterals;
 
 QString getHandlerRegPath(const QString&)
 {
-  if (getenv("APPIMAGE") != nullptr) {
-    const QStringList applicationDirs =
-        QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
-
-    const QStringList filter = {u"*nxmhandler.desktop"_s};
-    for (const auto& dir : applicationDirs) {
-      QFileInfoList entryList =
-          QDir(dir).entryInfoList(filter, QDir::Files | QDir::NoDotAndDotDot);
-      if (!entryList.empty()) {
-        return entryList.first().absoluteFilePath();
-      }
-    }
+  QString location = QStandardPaths::locate(QStandardPaths::ApplicationsLocation,
+                                            u"nxmhandler.desktop"_s);
+  if (!location.isEmpty()) {
+    return location;
   }
 
   return QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) %
