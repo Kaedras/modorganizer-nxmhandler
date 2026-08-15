@@ -4,54 +4,28 @@
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
+#include <QProcess>
 #include <QStandardPaths>
 
 using namespace std;
 using namespace Qt::StringLiterals;
 
-// register nxm handler
-void register_(const string& desktopFileName, const string& schema)
+namespace
 {
-  std::string command =
-      std::format("xdg-mime default {} x-scheme-handler/{}", desktopFileName, schema);
-  int status = system(command.c_str());
-  if (status != 0) {
-    QString message;
-    switch (status) {
-    case -1:
-      message = strerror(errno);
-      break;
-    case 1:
-      message = u"Error in command line syntax."_s;
-      break;
-    case 2:
-      message = u"One of the files passed on the command line did not exist."_s;
-      break;
-    case 3:
-      message = u"A required tool could not be found."_s;
-      break;
-    case 4:
-      message = u"The action failed."_s;
-      break;
-    case 5:
-      message = u"No permission to read one of the files passed on the command line."_s;
-      break;
-    default:
-      message = u"Unknown error."_s;
-      break;
-    }
-
-    QMessageBox::warning(
-        nullptr, QObject::tr("Error registering nxm handler"),
-        QObject::tr("An error occurred while registering nxmhandler: %1").arg(message));
-  }
+void showError(const QString& message)
+{
+  QMessageBox::warning(
+      nullptr, QObject::tr("Error registering nxm handler"),
+      QObject::tr("An error occurred while registering nxmhandler: %1").arg(message));
 }
+}  // namespace
 
 void HandlerStorage::registerSchemaProxy(const QString& proxyPath,
                                          const QString& schema)
 {
   // look for xdg-mime
-  if (QStandardPaths::findExecutable(u"xdg-mime"_s).isEmpty()) {
+  const QString xdgMime = QStandardPaths::findExecutable(u"xdg-mime"_s);
+  if (xdgMime.isEmpty()) {
     QMessageBox::warning(nullptr, QObject::tr("Error registering url handler"),
                          QObject::tr("Could not find xdg-mime"));
     return;
@@ -62,14 +36,14 @@ void HandlerStorage::registerSchemaProxy(const QString& proxyPath,
 
   // look up nxmhandler desktop file
   QString desktopFilePath;
-  std::string desktopFileName;
+  QString desktopFileName;
   const QStringList filter = {u"*nxmhandler.desktop"_s};
   for (const auto& dir : applicationDirs) {
     QFileInfoList entryList =
         QDir(dir).entryInfoList(filter, QDir::Files | QDir::NoDotAndDotDot);
     if (!entryList.empty()) {
       desktopFilePath = entryList.first().absoluteFilePath();
-      desktopFileName = entryList.first().fileName().toStdString();
+      desktopFileName = entryList.first().fileName();
       break;
     }
   }
@@ -79,7 +53,7 @@ void HandlerStorage::registerSchemaProxy(const QString& proxyPath,
     if (desktopFilePath.isEmpty()) {
       // desktop file does not exist, create it in XDG_DATA_HOME
       desktopFilePath = applicationDirs.first() % "/nxmhandler.desktop"_L1;
-      desktopFileName = "nxmhandler.desktop";
+      desktopFileName = u"nxmhandler.desktop"_s;
     }
 
     QFile file(desktopFilePath);
@@ -114,5 +88,44 @@ void HandlerStorage::registerSchemaProxy(const QString& proxyPath,
     }
   }
 
-  register_(desktopFileName, schema.toStdString());
+  QProcess p;
+  p.setProgram(xdgMime);
+  p.setArguments({u"default"_s, desktopFileName, "x-scheme-handler/"_L1 % schema});
+
+  p.start();
+
+  if (!p.waitForStarted() || !p.waitForFinished()) {
+    showError(p.errorString());
+    return;
+  }
+
+  int status = p.exitCode();
+  if (status != 0) {
+    QString message;
+    switch (status) {
+    case -1:
+      message = strerror(errno);
+      break;
+    case 1:
+      message = u"Error in command line syntax."_s;
+      break;
+    case 2:
+      message = u"One of the files passed on the command line did not exist."_s;
+      break;
+    case 3:
+      message = u"A required tool could not be found."_s;
+      break;
+    case 4:
+      message = u"The action failed."_s;
+      break;
+    case 5:
+      message = u"No permission to read one of the files passed on the command line."_s;
+      break;
+    default:
+      message = u"Unknown error."_s;
+      break;
+    }
+
+    showError(message);
+  }
 }
